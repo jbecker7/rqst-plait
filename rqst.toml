@@ -1,0 +1,20 @@
+title = "PLAI Interpreter"
+author = "cognitive-engineering-lab"
+repo = "rqst-plait"
+
+[[stages]]
+label = "00-testing"
+name = "Testing"
+
+[[stages]]
+label = "01-constants"
+name = "Constants"
+no-starter = true
+
+[[stages]]
+label = "02-op-if"
+name = "Operators and Conditionals"
+
+[[stages]]
+label = "03-lam"
+name = "Functions and Variables"
