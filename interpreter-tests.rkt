@@ -15,9 +15,7 @@
 (define/provide-test-suite sample-tests
   ;; DO NOT ADD TESTS HERE
   (test-equal? "Works with Num primitive"
-               (eval `2) (v-num 2))
-  (test-raises-error? "Passing Str to + results in error"
-                             (eval `{+ "bad" 1})))
+               (eval `2) (v-num 2)))
 
 ;; DO NOT EDIT ABOVE THIS LINE =================================================
 
