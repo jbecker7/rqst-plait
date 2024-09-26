@@ -14,7 +14,8 @@
 ; your code.
 (define/provide-test-suite sample-tests
   ;; DO NOT ADD TESTS HERE
-  )
+  (test-equal? "Works with Num primitive"
+               (eval `2) (v-num 2)))
 
 ;; DO NOT EDIT ABOVE THIS LINE =================================================
 
