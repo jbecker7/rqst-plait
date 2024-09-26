@@ -14,7 +14,19 @@
 (define-type Expr
   (e-num [value : Number])
   (e-str [value : String])
-  (e-bool [value : Boolean]))
+  (e-bool [value : Boolean])
+  (e-op [op : Operator]
+        [left : Expr]
+        [right : Expr])
+  (e-if [condition : Expr]
+        [consq : Expr]
+        [altern : Expr]))
+
+(define-type Operator
+  (op-plus)
+  (op-append)
+  (op-str-eq)
+  (op-num-eq))
 
 (define-syntax-rule (~a arg ...)
   (foldl (lambda (val string)
@@ -27,4 +39,29 @@
     [(s-exp-number? input) (e-num (s-exp->number input))]
     [(s-exp-string? input) (e-str (s-exp->string input))]
     [(s-exp-match? `true input) (e-bool #t)]
-    [(s-exp-match? `false input) (e-bool #f)]))
+    [(s-exp-match? `false input) (e-bool #f)]
+    [(s-exp-match? `{if ANY ...} input)
+     (let ([inlst (s-exp->list input)])
+       (if (equal? (length inlst) 4)
+           (e-if (parse (second inlst)) (parse (third inlst)) (parse (fourth inlst)))
+           (error '+ "incorrect number of args to if")))]
+    [(s-exp-match? `{+ ANY ...} input)
+     (let ([inlst (s-exp->list input)])
+       (if (equal? (length inlst) 3)
+           (e-op (op-plus) (parse (second inlst)) (parse (third inlst)))
+           (error '+ "incorrect number of args to +")))]
+    [(s-exp-match? `{++ ANY ...} input)
+     (let ([inlst (s-exp->list input)])
+       (if (equal? (length inlst) 3)
+           (e-op (op-append) (parse (second inlst)) (parse (third inlst)))
+           (error '++ "incorrect number of args to ++")))]
+    [(s-exp-match? `{num= ANY ...} input)
+     (let ([inlst (s-exp->list input)])
+       (if (equal? (length inlst) 3)
+           (e-op (op-num-eq) (parse (second inlst)) (parse (third inlst)))
+           (error 'num= "incorrect number of args to num=")))]
+    [(s-exp-match? `{str= ANY ...} input)
+     (let ([inlst (s-exp->list input)])
+       (if (equal? (length inlst) 3)
+           (e-op (op-str-eq) (parse (second inlst)) (parse (third inlst)))
+           (error 'str= "incorrect number of args to str=")))]))
