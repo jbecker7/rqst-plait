@@ -1,0 +1,2 @@
+#!/bin/sh
+chmod -w support.rkt test-support.rkt README.md .github/workflows/ci.yaml

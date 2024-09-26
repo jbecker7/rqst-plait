@@ -1,0 +1,25 @@
+name: CI
+
+on: [push]
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache Racket dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/racket
+            ~/.local/share/racket
+          key: ${{ runner.os }}-racket-8.1
+      - name: Install Racket
+        uses: Bogdanp/setup-racket@v1.11
+        with:
+          version: 8.1
+      - name: Install Racket packages
+        run: raco pkg install --skip-installed --auto plait
+      - name: Run tests
+        run: raco test -s main *-tests.rkt
