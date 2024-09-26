@@ -12,9 +12,5 @@
 ;; DO NOT EDIT ABOVE THIS LINE =================================================
 
 (define (interp [expr : Expr]): Value
-  (type-case Expr expr
-
-  [ (e-num value) (v-num value) ]
-  [ (e-str value) (v-str value)]
-  [ (e-bool value) (v-bool value)]
-  ))
+  ; TODO: Implement me!
+  ....)
