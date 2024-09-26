@@ -20,7 +20,13 @@
 
 (define/provide-test-suite student-tests ;; DO NOT EDIT THIS LINE ==========
   ; TODO: Add your own tests below!
-  )
+
+
+  (test-equal? "Works with strings"
+               (eval "Hello World!") (string "Hello World!"))
+
+  (test-equal? "Works with booleans"
+               (eval true) (true)))
 
 ;; DO NOT EDIT BELOW THIS LINE =================================================
 
