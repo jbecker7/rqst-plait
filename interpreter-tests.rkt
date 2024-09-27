@@ -78,6 +78,27 @@
   (eval `(if false "yes" "no")) (v-str "no"))
 
 
+;; Tests for variables
+
+
+
+;; Tests for lambdas and functions
+
+
+;; Test for simple lambda application
+(test-equal? "Works with lambda application"
+  (eval `((lam x (+ x 3)) 2)) (v-num 5))
+
+;; Test for constant function (ignores the argument)
+(test-equal? "Works with constant function"
+  (eval `((lam y 5) 1)) (v-num 5))
+
+;; Test for nested lambdas (function that returns a function)
+(test-equal? "Works with nested lambdas"
+  (eval `(((lam x (lam y (+ x y))) 5) 7)) (v-num 12))
+
+
+  
 ;; Tests for error logging
 
 ;; Error: trying to add a number and a string
@@ -92,7 +113,19 @@
 (test-raises-error? "Fails on non-boolean condition in if"
   (eval `(if 5 "yes" "no")))
 )
-  
+
+;; Error: applying a non-function (e.g., trying to call a number)
+(test-raises-error? "Fails on applying a non-function"
+  (eval `(5 3)))
+
+;; Error: using an unbound variable
+(test-raises-error? "Fails on unbound variable"
+  (eval `x))
+
+;; Error: using an unbound variable inside a lambda
+(test-raises-error? "Fails on unbound variable inside lambda"
+  (eval `((lam x (+ x y)) 3)))
+
 ;; DO NOT EDIT BELOW THIS LINE =================================================
 
 (module+ main
