@@ -77,11 +77,6 @@
 (test-equal? "Works with if - false condition"
   (eval `(if false "yes" "no")) (v-str "no"))
 
-
-;; Tests for variables
-
-
-
 ;; Tests for lambdas and functions
 
 
@@ -125,6 +120,79 @@
 ;; Error: using an unbound variable inside a lambda
 (test-raises-error? "Fails on unbound variable inside lambda"
   (eval `((lam x (+ x y)) 3)))
+
+
+;; Additional Tests for Edge Cases and Chaff Detection (I missed a few)
+
+;; Test adding a boolean to a number (should raise an error)
+(test-raises-error? "Fails on addition of boolean and number"
+  (eval `(+ true 5)))
+
+;; Test string equality with mixed types
+(test-raises-error? "Fails on string equality with number"
+  (eval `(str= "string" 5)))
+
+;; Test string concatenation with a boolean (should raise an error)
+(test-raises-error? "Fails on invalid string concatenation with boolean"
+  (eval `(++ true "string")))
+
+;; Test number equality with a boolean (should raise an error)
+(test-raises-error? "Fails on number equality with boolean"
+  (eval `(num= 5 true)))
+
+
+;; Test if with number as condition (should raise an error)
+(test-raises-error? "Fails on if with number as condition"
+  (eval `(if 1 "yes" "no")))
+
+;; Test nested if with invalid condition (non-boolean condition)
+(test-raises-error? "Fails on nested if with invalid condition"
+  (eval `(if true (if 5 "yes" "no") "no")))
+
+
+;; Test applying a non-function as a function (e.g., a string)
+(test-raises-error? "Fails on applying string as function"
+  (eval `("string" 2)))
+
+;; Test applying a boolean as a function
+(test-raises-error? "Fails on applying boolean as function"
+  (eval `(true 1)))
+
+;; Test lambda returning another lambda and applying the result
+(test-equal? "Works with lambda returning another lambda"
+  (eval `(((lam x (lam y (+ x y))) 3) 4)) (v-num 7))
+
+;; Test applying a lambda with incorrect argument types (e.g., string instead of number)
+(test-raises-error? "Fails on applying lambda with incorrect argument type"
+  (eval `((lam x (+ x 3)) "not a number")))
+
+
+;; Test unbound variable usage (should raise an error)
+(test-raises-error? "Fails on using unbound variable"
+  (eval `(let1 y 5 x)))
+
+;; Test variable defined inside lambda (should raise an error when used outside)
+(test-raises-error? "Fails on using variable outside of lambda"
+  (eval `((lam x (+ x y)) 3)))
+
+;; Test for handling empty string in string concatenation
+(test-equal? "Works with empty string concatenation"
+  (eval `(++ "" "test")) (v-str "test"))
+
+;; Test for handling zero in addition
+(test-equal? "Works with zero in addition"
+  (eval `(+ 0 5)) (v-num 5))
+
+;; Test for variable binding using a lambda expression
+(test-equal? "Lambda binds variable and performs addition"
+  (eval `((lam x (+ x 3)) 5))
+  (v-num 8))
+
+;; Test for variable shadowing within nested lambdas
+(test-equal? "Variable shadowing in nested lambdas"
+  (eval `(((lam x (lam x (+ x 3))) 5) 10))
+  (v-num 13))
+
 
 ;; DO NOT EDIT BELOW THIS LINE =================================================
 
