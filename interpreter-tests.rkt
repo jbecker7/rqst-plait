@@ -17,7 +17,9 @@
   (test-equal? "Works with Num primitive"
                (eval `2) (v-num 2))
   (test-raises-error? "Passing Str to + results in error"
-                             (eval `{+ "bad" 1})))
+                             (eval `{+ "bad" 1}))
+  (test-pred "Equivalent to the test case above, but with test-pred"
+             v-fun? (eval `{lam x 5})))
 
 ;; DO NOT EDIT ABOVE THIS LINE =================================================
 
