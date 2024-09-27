@@ -92,6 +92,15 @@
 (test-equal? "Works with nested lambdas"
   (eval `(((lam x (lam y (+ x y))) 5) 7)) (v-num 12))
 
+;; Test for variable binding using a lambda expression
+(test-equal? "Lambda binds variable and performs addition"
+  (eval `((lam x (+ x 3)) 5))
+  (v-num 8))
+
+;; Test for variable shadowing within nested lambdas
+(test-equal? "Variable shadowing in nested lambdas"
+  (eval `(((lam x (lam x (+ x 3))) 5) 10))
+  (v-num 13))
 
   
 ;; Tests for error logging
@@ -183,15 +192,6 @@
 (test-equal? "Works with zero in addition"
   (eval `(+ 0 5)) (v-num 5))
 
-;; Test for variable binding using a lambda expression
-(test-equal? "Lambda binds variable and performs addition"
-  (eval `((lam x (+ x 3)) 5))
-  (v-num 8))
-
-;; Test for variable shadowing within nested lambdas
-(test-equal? "Variable shadowing in nested lambdas"
-  (eval `(((lam x (lam x (+ x 3))) 5) 10))
-  (v-num 13))
 
 
 ;; DO NOT EDIT BELOW THIS LINE =================================================
