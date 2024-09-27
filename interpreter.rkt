@@ -13,7 +13,7 @@
 
 ; (interp: (Expr -> Value))
 
-(define (interp [expr : Expr]) : Value
+(define (interp [expr : Expr] [env : Env]) : Value
   (type-case Expr expr
     ;; Handle constants (numbers, strings, booleans)
     [(e-num value) (v-num value)]
@@ -22,8 +22,8 @@
 
     ;; Handle binary operators (e-op)
     [(e-op op left right)
-     (let ([left-val (interp left)]
-           [right-val (interp right)])
+     (let ([left-val (interp left env)]
+           [right-val (interp right env)])
        ;; Separate subcategories of operators
        (type-case Operator op
          ;; (+ <expr> <expr>)
@@ -62,11 +62,33 @@
     ;; Handle conditionals (e-if)
     ;; (if <expr> <expr> <expr>)
     [(e-if condition consq altern)
-     (let ([cond-val (interp condition)])
+     (let ([cond-val (interp condition env)])
        (type-case Value cond-val
          [(v-bool b)
           (if b
-              (interp consq)
-              (interp altern))]
+              (interp consq env)
+              (interp altern env))]
          [else
-          (error 'interp-error "Condition must evaluate to a boolean")]))]))
+          (error 'interp-error "Condition must evaluate to a boolean")]))]
+
+    ;; Handle variables (e-var)
+    ;; (var <name>)
+    [(e-var name)
+     (let ([val (hash-ref env name (lambda () (error 'interp-error (format "Unbound variable: ~a" name))))])
+       val)]
+
+    ;; Handle lambda expressions (e-lam)
+    ;; (lam <var> <expr>)
+    [(e-lam param body)
+     (v-fun param body env)] ;; Capture the environment when creating the lambda
+
+    ;; Handle function application (e-app)
+    ;; (<expr> <expr>)
+    [(e-app func-expr arg-expr)
+     (let ([func-val (interp func-expr env)]) ;; Evaluate the function expression
+       (type-case Value func-val
+         [(v-fun param body closure-env)
+          (let ([arg-val (interp arg-expr env)]) ;; Evaluate the argument
+            (let ([new-env (hash-set closure-env param arg-val)]) ;; Extend the environment
+              (interp body new-env)))] ;; Evaluate the body in the new environment
+         [else (error 'interp-error "Expected function in application")]))]))
